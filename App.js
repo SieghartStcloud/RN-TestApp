@@ -18,11 +18,20 @@ import {
 
 
 import { AppNavigator } from './Tools/ReactNavigation'
+// import  {createSwitchNavigator, createAppContainer} from 'react-navigation';
+// import {createDrawerNavigator, Drawer} from 'react-navigation-drawer';
+// import welcomeScreen from './Screens/welcomeScreen';
+// import scanningScreen from './Screens/scanningScreen';
+
+
+
+
 
 const App = () => {
   return (
     <View style={[styles.app, styles.tempGrid]}>
       <AppNavigator />
+      {/* <AppContainer></AppContainer> */}
     </View>
   );
 };
@@ -40,3 +49,25 @@ export const styles = StyleSheet.create({
 });
 
 export default App;
+
+// //--
+
+// const AppDrawerNavigator = createDrawerNavigator({
+//   Scanning: {
+//     screen: scanningScreen
+//   }
+// })
+
+// //---
+
+// const AppSwitchNavigator =  createSwitchNavigator({
+//   Welcome: {screen: welcomeScreen},
+//   Scanning: { screen: AppDrawerNavigator}
+// });
+
+// const AppContainer = createAppContainer(AppSwitchNavigator);
+
+// //----
+
+
+

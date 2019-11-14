@@ -3,20 +3,52 @@ import {
     StyleSheet,
     View,
     Text,
+    Animated,
+    Button,
+    Easing
   } from 'react-native';
 
-  export default ScanningScreen = () => {
+import { MyCart } from '../Container/myCart'  
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+  export default ScanningScreen = (props) => {
+    //STATE
+    const [panelViewOn, setPanelViewOn] = useState(false);
+    let value = 0
+
+    //CSS VAR
+    const panelVisible = [styles.teamPanel, styles.tempBorder]
+    const panelNotVisible = [styles.teamPanelHidden, styles.tempBorder]
+
+    //FUNCTIONS
+    const teamPanelAction = () => {
+        panelViewOn ? setPanelViewOn(false) : setPanelViewOn(true);
+    }
+
+    const AnimateAction = () => {
+        Animated.timing( value , {
+            toValue: 1,
+            duration: 2000,
+        }).start();
+        teamPanelAction
+    }
+
+
+
+
+
     return (
         <View style={[styles.initialScreen, styles.tempBorder]}>
         {/* SCANNED ITEM CONTAINER */}
           <View style={[styles.scannedItemContainer, styles.tempBorder]}>
               <View style={[styles.scannedItemDisplay, styles.tempBorder]}></View>
               <View style={[styles.supportButtonContainer], styles.tempBorder}>
-                  <Text>test</Text>
+                  {/* <Button onPress={()=> props.navigation.toggleDrawer()} title="Open Draw"></Button> */}
               </View>
           </View>
 
-          <View style={[styles.myCartContainer, styles.tempBorder]}></View>
+            <MyCart></MyCart>
+          
         </View>
       );
   }
@@ -41,11 +73,13 @@ import {
 
         backgroundColor: 'white'
     },
-    myCartContainer:{
+    teamPanel:{
         flex:0.3,
-        // display:'none',
+        backgroundColor:'yellow',
+    },
 
-        backgroundColor: 'lightgreen'
+    teamPanelHidden:{
+        display: 'none'
     },
 
     tempBorder:{
