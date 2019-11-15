@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -8,9 +8,17 @@ import {
     TextInput
   } from 'react-native';
 
+  //STATE
+import { StateContext, useGlobalStore } from '../StateManagement/globalStore'
 
 export const SearchScreen = (props) => {
+    const [initialState, dispatch] = useGlobalStore();
     const [searchValue, setSearchValue] = useState('')
+
+    //SETTING CURRENT SCREEN AT INITIAL RENDER
+    useEffect(()=> {
+    dispatch({type: 'SET_CURRENT_SCREEN', payload: 'Search'})
+    },[])
 
     return (
         <View style={{flex:1}}>
@@ -39,6 +47,11 @@ export const SearchScreen = (props) => {
 
             {/* BODY */}
             <View style={{flex:1, backgroundColor:'#F7F7F7', borderTopWidth:1, borderTopColor:'lightgray'}}></View>
+
+            {/* TEMP FOOTER */}
+            <View style={{flex: 0.1, alignContent:'flex-end'}}>
+                <Text style={{textAlign:'right', marginTop:'auto', marginBottom:'auto'}}>Current Screen: {initialState.settings.activePage}</Text>
+            </View>
         </View>
     )
 }

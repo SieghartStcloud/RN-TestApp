@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -10,31 +10,23 @@ import {
 
 import { MyCart } from '../Container/myCart'  
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StateContext, useGlobalStore } from '../StateManagement/globalStore'
 
   export default ScanningScreen = (props) => {
     //STATE
+    const [initialState, dispatch] = useGlobalStore();
     const [panelViewOn, setPanelViewOn] = useState(false);
     let value = 0
 
-    //CSS VAR
-    const panelVisible = [styles.teamPanel, styles.tempBorder]
-    const panelNotVisible = [styles.teamPanelHidden, styles.tempBorder]
+     //SETTING CURRENT SCREEN AT INITIAL RENDER
+    useEffect(()=> {
+    dispatch({type: 'SET_CURRENT_SCREEN', payload: 'Scanning'})
+    },[])
 
     //FUNCTIONS
     const teamPanelAction = () => {
         panelViewOn ? setPanelViewOn(false) : setPanelViewOn(true);
     }
-
-    const AnimateAction = () => {
-        Animated.timing( value , {
-            toValue: 1,
-            duration: 2000,
-        }).start();
-        teamPanelAction
-    }
-
-
-
 
 
     return (
@@ -45,6 +37,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
               <View style={[styles.supportButtonContainer], styles.tempBorder}>
                   {/* <Button onPress={()=> props.navigation.toggleDrawer()} title="Open Draw"></Button> */}
               </View>
+              <Text style={{textAlign:'right', marginTop:'auto', marginBottom:'auto'}}>Current Screen: {initialState.settings.activePage}</Text>
           </View>
 
             <MyCart></MyCart>

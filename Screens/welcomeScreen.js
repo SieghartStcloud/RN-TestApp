@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -6,14 +6,43 @@ import {
     Button,
   } from 'react-native';
 
+  //COMPONENTS
 import { SupportButton } from '../Components/supportButton'
 
+//STATE
+import { StateContext, useGlobalStore } from '../StateManagement/globalStore'
+
 export default WelcomeScreen = (props) => {
-  const [counter, setCounter] = useState(0);
+  const [initialState, dispatch] = useGlobalStore();
+  const [counter, setCounter] = useState(initialState.counter);
+
+  //SETTING CURRENT SCREEN AT INITIAL RENDER
+  useEffect(()=> {
+    dispatch({type: 'SET_CURRENT_SCREEN', payload: 'Welcome'})
+  },[])
+  
+  //COUNTER STATE TEST
+  useEffect(()=> {
+    counter !== initialState.counter ? counter = initialState.counter : '';
+
+ },[initialState.counter])
 
   const toScanningScreen = () => {
     props.navigation.navigate('Scanning')
+    // dispatch({type: 'SET_CURRENT_SCREEN', payload: 'Scanning'})
+  }
+
+  //TESTING GLOBAL STATE 
+  const counterIncreaseAction = () => {
     setCounter(counter + 1)
+    dispatch({type: 'SET_COUNTER_INCREASE', payload: counter + 1})
+  }
+
+
+  //TESTING GLOBAL STATE CHILD STATE 
+  const welcomePageCounterIncreaseAction = () => {
+    setCounter(counter + 1)
+    dispatch({type: 'SET_WELCOMEPAGE_COUNTER_INCREASE', payload: counter + 1})
   }
 
   return (
@@ -21,7 +50,9 @@ export default WelcomeScreen = (props) => {
           {/* buttons logo */}
           <View style={[wstyles.logoBox, wstyles.tempGrid]}>
             {/* Temp for showing state change */}
-            <Text style={{textAlign:'center', marginTop:'auto', marginBottom:'auto'}}>{counter}</Text>
+            <Text style={{textAlign:'left', marginTop:'auto', marginBottom:'auto'}}>local State: {counter}</Text>
+            <Text style={{textAlign:'right', marginTop:'auto', marginBottom:'auto'}}>global State: {initialState.counter}</Text>
+            <Text style={{textAlign:'right', marginTop:'auto', marginBottom:'auto'}}>Current Screen: {initialState.settings.activePage}</Text>
           </View>
           {/* welcome title container */}
           <View style={[wstyles.welcomeTextContainer, wstyles.tempGrid]}>

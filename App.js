@@ -15,24 +15,18 @@ import {
   View,
 } from 'react-native';
 
-
-
+//NAV
 import { AppNavigator } from './Tools/ReactNavigation'
-// import  {createSwitchNavigator, createAppContainer} from 'react-navigation';
-// import {createDrawerNavigator, Drawer} from 'react-navigation-drawer';
-// import welcomeScreen from './Screens/welcomeScreen';
-// import scanningScreen from './Screens/scanningScreen';
-
-
-
-
+//STATE
+import { fullState, reducer, StateProvider } from './StateManagement/globalStore'
 
 const App = () => {
   return (
-    <View style={[styles.app, styles.tempGrid]}>
-      <AppNavigator />
-      {/* <AppContainer></AppContainer> */}
-    </View>
+    <StateProvider initialState={fullState} reducer={reducer}>
+      <View style={[styles.app, styles.tempGrid]}>
+        <AppNavigator />
+      </View>
+    </StateProvider>
   );
 };
 
@@ -49,25 +43,4 @@ export const styles = StyleSheet.create({
 });
 
 export default App;
-
-// //--
-
-// const AppDrawerNavigator = createDrawerNavigator({
-//   Scanning: {
-//     screen: scanningScreen
-//   }
-// })
-
-// //---
-
-// const AppSwitchNavigator =  createSwitchNavigator({
-//   Welcome: {screen: welcomeScreen},
-//   Scanning: { screen: AppDrawerNavigator}
-// });
-
-// const AppContainer = createAppContainer(AppSwitchNavigator);
-
-// //----
-
-
 
