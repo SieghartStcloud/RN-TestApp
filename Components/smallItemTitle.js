@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import {
     StyleSheet,
@@ -8,10 +8,19 @@ import {
     TouchableOpacity,
   } from 'react-native';
 
-  import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faWindowClose } from '@fortawesome/free-solid-svg-icons';
 
+const props = {
+    description: '',
+    price: 0,
+    active: false,
+    deleted: false,
+}
+
 export const SmallItemTile = (props) =>{
+    const id = useRef()
+    //State
     const [description, setDiscription] = useState(props.description || 'default')
     const [price, setPrice] = useState(props.price || 0.00)
     const [active, setActive] = useState(props.active || false)
@@ -23,12 +32,13 @@ export const SmallItemTile = (props) =>{
         }
     }, [props.active])
 
+    //function
     const changeDeleted = () => {
         setDeleted(!deleted)
     }
 
     return (
-        <View style={[{width:290, padding:10, borderWidth:1, borderColor:'pink'}, active? {backgroundColor:'lightgreen'}: {backgroundColor:'yellow'}, deleted? {backgroundColor: 'gray'}: {}]}>
+        <View ref={id} style={[{flex:1, padding:10, borderWidth:1, borderColor:'pink'}, active? {backgroundColor:'green'}: {backgroundColor:'yellow'}, deleted? {backgroundColor: 'gray'}: {}]}>
             <View style={{flex:1, flexDirection:'row', paddingBottom:10}}>
                 <Text style={[{flex:0.7,color:'black'}, deleted? {textDecorationLine: 'line-through'}: {}]}>{description}</Text>
                 <Text style={[{flex:0.2,color:'black'}, deleted? {textDecorationLine: 'line-through'}: {}]}>{price}</Text>

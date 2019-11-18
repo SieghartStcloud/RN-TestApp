@@ -3,13 +3,15 @@ import {
     StyleSheet,
     View,
     Text,
+    Button,
   } from 'react-native';
 
-import { TouchableOpacity, ScrollView, FlatList } from 'react-native-gesture-handler';
+import { TouchableOpacity, ScrollView ,FlatList } from 'react-native-gesture-handler';
 
 //COMPONENT
 import { SmallItemTile } from '../Components/smallItemTitle';
 import { GenericButton } from '../Components/genericButton';
+import { ScrollableList } from '../Container/scrollableList';
 
 //ICONS
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -26,6 +28,8 @@ export const MyCart = ( props ) => {
     const [basketCounter, setBasketCounter] = useState(0)
     const [totalCost, setTotalCost] = useState(0)
     const [itemList, setItemList] = useState( ItemList || [{}])
+
+    const [scrollToIndex, setScrollToIndex] = useState(0)
 
     useEffect(()=>{   
         if(itemList.length !== basketCounter){
@@ -55,11 +59,11 @@ export const MyCart = ( props ) => {
             {/* HEADER */}
             <View style={[isFullView? styles.myCartHeaderLG : styles.myCartHeaderSM]}>
 
-                <View style={{flex:1, flexDirection:'row', borderWidth:1, borderColor:'pink'}}>
+                <View style={{flex:1, flexDirection:'row'}}>
                     <FontAwesomeIcon icon={faShoppingCart} style={{alignSelf:'center', marginLeft: 5}} size={20}></FontAwesomeIcon>
                     <Text style={[styles.myCartHeaderText]}>My Cart: {basketCounter} {basketCounter === 1 ? 'Item' : 'Items'}</Text>
                 </View>
-                    <View style={{flex:0.2, borderWidth:1, alignSelf:'center', borderColor:'pink'}}>
+                    <View style={{flex:0.2, alignSelf:'center'}}>
                         
                         {<GenericButton 
                             title={isFullView? "Close Summary" : ''}
@@ -80,33 +84,42 @@ export const MyCart = ( props ) => {
             
             {/* BODY */}
             <View style={[{flex:0.8, flexDirection:'column', backgroundColor:'lightgray'}, styles.tempBorder]}>
-                
-                <FlatList
-                        data={itemList}
-                        renderItem={({item, index}) => 
-                            <TouchableOpacity key={index} onPress={()=>{setActiveItem(index)}} style={{marginLeft:10, marginRight:10, marginTop:5, marginBottom:5}}>
-                                <SmallItemTile
-                                    description={item.description} 
-                                    price={item.price}
-                                    active={activeItem === index? true : false}
-                                    deleted={item.deleted}
-                                    />
-                            </TouchableOpacity>
-                        }
-                        keyExtractor={(item, index) => item + index.toString()}
-                        contentContainerStyle={isFullView?{flexDirection: 'row', flexWrap:'wrap'}: {}}
-                />
+            
+                <ScrollableList itemList={itemList}>
+                    <View>
+                        <FlatList
+                            data={itemList}
+                            renderItem={({item, index}) => 
+                                <TouchableOpacity key={index} onPress={()=>{setActiveItem(index)}} style={{marginLeft:10, marginRight:10, marginTop:5, marginBottom:5}}>
+                                    <SmallItemTile
+                                        description={item.description} 
+                                        price={item.price}
+                                        active={activeItem === index? true : false}
+                                        deleted={item.deleted}
+                                        />
+                                </TouchableOpacity>
+                            }
+                            keyExtractor={(item, index) => item.description + index.toString()}
+                            contentContainerStyle={isFullView?{flexDirection: 'row'}: {}}
+                            showsVerticalScrollIndicator={false}
+                            scrollToIndex={{index: scrollToIndex}}
+                        />
+                    </View>
+                    
+                    
+                </ScrollableList>
+                <Button title={`Scroll ${scrollToIndex}`} onPress={()=> setScrollToIndex(scrollToIndex +1)}></Button>
             </View>
                         
             
             {/* FOOTER */}
-            <View style={[isFullView? styles.footerContainerLG : styles.footerContainerSM, styles.tempBorder]}>
-                <View style={[isFullView? styles.totalCostContainerLG : styles.totalCostContainerSM, styles.tempBorder]}>
-                    <Text style={[{flex:0.5, alignSelf:'center', fontWeight:'700', fontSize:20},styles.tempBorder]}>Total</Text>
-                    <Text style={[{flex:0.5, alignSelf:'center',fontWeight:'700', fontSize:35, textAlign:'right'},styles.tempBorder]}>${totalCost}</Text>
+            <View style={[isFullView? styles.footerContainerLG : styles.footerContainerSM]}>
+                <View style={[isFullView? styles.totalCostContainerLG : styles.totalCostContainerSM]}>
+                    <Text style={[{flex:0.5, alignSelf:'center', fontWeight:'700', fontSize:20}]}>Total</Text>
+                    <Text style={[{flex:0.5, alignSelf:'center',fontWeight:'700', fontSize:35, textAlign:'right'}]}>${totalCost}</Text>
                 </View>
                 
-                <View style={[isFullView?{flex:0.8,flexDirection:'row-reverse', alignSelf:'center'}: {flex:0.5, alignSelf:'center'}, styles.tempBorder]}>
+                <View style={[isFullView?{flex:0.8,flexDirection:'row-reverse', alignSelf:'center'}: {flex:0.5, alignSelf:'center'}]}>
                     <View style={isFullView? {width:275} : {width:275, marginTop:'auto', marginBottom:'auto'}}>
                         <GenericButton 
                             backgroundColor='#DA291C' 

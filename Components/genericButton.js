@@ -3,7 +3,6 @@ import {
     StyleSheet,
     View,
     Text,
-    Button,
   } from 'react-native';
 
   import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -27,6 +26,8 @@ import {
         setTitle(props.title)
     },[props.title])
 
+
+
     //function
 
     return(
@@ -41,17 +42,12 @@ import {
                     { title === ''? 
                     <View style={{display:'none'}}></View>
                     :
-                    <Text style={[styles.genericButtonText, styles.tempBorder, {color: props.textColor, fontSize: props.textSize}]}>{title}</Text> 
+                    <Text style={[styles.genericButtonText,  {color: props.textColor, fontSize: props.textSize}]}>{title}</Text> 
                     }
                     
                     {/* ICON */}
                     {props.icon !== null ?
-                    <View style={
-                        [
-                            styles.genericButtonIcon,
-                            styles.tempBorder,
-                        ]
-                        }>
+                    <View style={styles.genericButtonIcon}>
                         {props.icon}
                     </View>
                     :
@@ -80,8 +76,5 @@ import {
         flex:0.1,
         alignSelf:'center',
     },
-    // tempBorder:{
-    //     borderWidth:1,
-    //     borderColor:'pink'
-    // }
+
 })
