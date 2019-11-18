@@ -3,41 +3,29 @@ import {
     StyleSheet,
     View,
     Text,
-    Button,
   } from 'react-native';
+
 import { TouchableOpacity, ScrollView, FlatList } from 'react-native-gesture-handler';
 
-import { SmallItemTile } from '../Components/smallItemTitle'
+//COMPONENT
+import { SmallItemTile } from '../Components/smallItemTitle';
+import { GenericButton } from '../Components/genericButton';
+
+//ICONS
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faBars, faShoppingCart, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+
+//MOCK DATA
+import { ItemList } from '../MockData/mockData'
 
 
 export const MyCart = ( props ) => {
-    const [fullView, setFullView] = useState(false)
+    const [isFullView, setIsFullView] = useState(false)
     const [title] = useState(props.title || 'default')
     const [activeItem, setActiveItem] = useState(0)
     const [basketCounter, setBasketCounter] = useState(0)
     const [totalCost, setTotalCost] = useState(0)
-    const [itemList, setItemList] = useState(
-        [
-            {
-                description: 'Fancy Hammer Of Justice',
-                price: 5.50,
-                active: true,
-                deleted: false,
-            },
-            {
-                description: 'Unfancy Nail Of Sorrow',
-                price: 1.50,
-                active: false,
-                deleted: false,
-            },
-            {
-                description: 'temp 2',
-                price: 1.50,
-                active: false,
-                deleted: false,
-            }
-        ]
-    )
+    const [itemList, setItemList] = useState( ItemList || [{}])
 
     useEffect(()=>{   
         if(itemList.length !== basketCounter){
@@ -55,16 +43,39 @@ export const MyCart = ( props ) => {
        
     },[itemList.length])
 
-   
+    const expandView = () => {
+        isFullView? setIsFullView(false) : setIsFullView(true);
+    }   
+
+
 
     return(
-        <View style={[styles.myCartContainer, styles.tempBorder]}>
+        <View style={[isFullView? styles.myCartContainerExpanded : styles.myCartContainer, styles.tempBorder]}>
+
             {/* HEADER */}
-            <TouchableOpacity>
-                <View style={[styles.myCartHeader, styles.tempBorder]}>
+            <View style={[isFullView? styles.myCartHeaderLG : styles.myCartHeaderSM]}>
+
+                <View style={{flex:1, flexDirection:'row', borderWidth:1, borderColor:'pink'}}>
+                    <FontAwesomeIcon icon={faShoppingCart} style={{alignSelf:'center', marginLeft: 5}} size={20}></FontAwesomeIcon>
                     <Text style={[styles.myCartHeaderText]}>My Cart: {basketCounter} {basketCounter === 1 ? 'Item' : 'Items'}</Text>
                 </View>
-            </TouchableOpacity>
+                    <View style={{flex:0.2, borderWidth:1, alignSelf:'center', borderColor:'pink'}}>
+                        
+                        {<GenericButton 
+                            title={isFullView? "Close Summary" : ''}
+                            height={60}
+                            backgroundColor={isFullView? "#F2AE3D" : '#fff'}
+                            textColor='black'
+                            elevation={3}
+                            icon={<FontAwesomeIcon icon={isFullView? faArrowRight : faBars} color='black' style={{width:'20%', marginTop:'auto', marginBottom:'auto'}}></FontAwesomeIcon>}
+                            pressAction={expandView}
+                            >
+                                
+                        </GenericButton>}
+                         
+                    </View>
+
+            </View>
             
             
             {/* BODY */}
@@ -73,7 +84,7 @@ export const MyCart = ( props ) => {
                 <FlatList
                         data={itemList}
                         renderItem={({item, index}) => 
-                            <TouchableOpacity key={index} onPress={()=>{setActiveItem(index)}}>
+                            <TouchableOpacity key={index} onPress={()=>{setActiveItem(index)}} style={{marginLeft:10, marginRight:10, marginTop:5, marginBottom:5}}>
                                 <SmallItemTile
                                     description={item.description} 
                                     price={item.price}
@@ -82,21 +93,30 @@ export const MyCart = ( props ) => {
                                     />
                             </TouchableOpacity>
                         }
-                        keyExtractor={(item, index) => index.toString()}
+                        keyExtractor={(item, index) => item + index.toString()}
+                        contentContainerStyle={isFullView?{flexDirection: 'row', flexWrap:'wrap'}: {}}
                 />
             </View>
                         
             
             {/* FOOTER */}
-            <View style={[{flex:0.2, flexDirection:'column'}, styles.tempBorder]}>
-                <View style={[styles.totalCostContainer, styles.tempBorder]}>
+            <View style={[isFullView? styles.footerContainerLG : styles.footerContainerSM, styles.tempBorder]}>
+                <View style={[isFullView? styles.totalCostContainerLG : styles.totalCostContainerSM, styles.tempBorder]}>
                     <Text style={[{flex:0.5, alignSelf:'center', fontWeight:'700', fontSize:20},styles.tempBorder]}>Total</Text>
                     <Text style={[{flex:0.5, alignSelf:'center',fontWeight:'700', fontSize:35, textAlign:'right'},styles.tempBorder]}>${totalCost}</Text>
                 </View>
-                <View style={{flex:0.5, flexDirection:'column',justifyContent:'space-evenly', marginLeft:15, marginRight: 15}}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={{color:'white', fontWeight:'700', fontSize:20 }}>Pay Now</Text>
-                    </TouchableOpacity>
+                
+                <View style={[isFullView?{flex:0.8,flexDirection:'row-reverse', alignSelf:'center'}: {flex:0.5, alignSelf:'center'}, styles.tempBorder]}>
+                    <View style={isFullView? {width:275} : {width:275, marginTop:'auto', marginBottom:'auto'}}>
+                        <GenericButton 
+                            backgroundColor='#DA291C' 
+                            title='Pay Now' 
+                            textColor='white'
+                            textSize={20}
+                            height={60}
+                            icon={<FontAwesomeIcon icon={faArrowRight} color='white' size={20}></FontAwesomeIcon>}>
+                        </GenericButton>
+                    </View>
                 </View>
             </View>
 
@@ -104,19 +124,36 @@ export const MyCart = ( props ) => {
     )
 };
 
+
+
+
 const styles = StyleSheet.create({
     myCartContainer:{
         flex:0.3,
         flexDirection: 'column',
         backgroundColor: '#ffff'
     },
-    myCartHeader:{
+    myCartContainerExpanded:{
         // flex:1,
-        // flexDirection:'row',
-        height: 58,
-        borderBottomWidth: 1,
-        borderBottomColor: 'lightgray'
+        // alignSelf:'stretch',
+        flexDirection: 'column',
+        // backgroundColor: 'red',
+        zIndex:99,
+        position:'absolute',
+        top: 0, bottom: 0, left: 0, right: 0
+    },
+    myCartHeaderSM:{
+        flex:0.1, flexDirection:'row', backgroundColor:'white'
+    },
+    myCartHeaderLG:{
+        flex:0.1, flexDirection:'row', backgroundColor:'white'
 
+    },
+    myCartHeaderItemsTally:{
+        // height: 58,
+    },
+    myCartBarIcon: {
+        height: 58,
     },
     myCartHeaderText:{
         color: '#0D5257',
@@ -126,13 +163,38 @@ const styles = StyleSheet.create({
         marginBottom:'auto', 
         marginLeft:15,
     },
-    totalCostContainer:{
+    totalCostContainerSM:{
         flex:0.5,
         flexDirection: 'row',
         paddingLeft: 10,
         paddingRight: 10,
     },
-    button: {
+    totalCostContainerLG:{
+        flex:0.2,
+        flexDirection: 'row',
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
+    footerContainerSM:{
+        flex:0.2, 
+        flexDirection:'column',
+        backgroundColor: 'white'
+        
+    },
+    footerContainerLG:{
+        flex:0.1, 
+        flexDirection:'row',
+        backgroundColor: 'white'
+    },
+    payNowBoxSM:{
+        flex:0.5, flexDirection:'column',justifyContent:'space-evenly', marginLeft:15, marginRight: 15
+    },
+    payNowBoxLG:{
+        flex:1, 
+        flexDirection:'row-reverse', 
+        alignSelf:'center'
+    },    
+    buttonSM: {
         flex:1,
         justifyContent:'space-evenly',
         alignSelf:'stretch',
@@ -140,18 +202,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#DA291C',
         padding: 25,
         borderRadius: 5,
-        // boxShadow: '10 10 red'
-        // shadowOffset:{  width: 20,  height: 20,  },
-        // shadowColor: 'black',
-        // shadowOpacity: 1.0,
-        elevation:2
-
-
+        elevation:2    
     },
-    
+    buttonLG: {
+        width:350,
+        justifyContent:'space-evenly',
+        alignSelf:'flex-end',
+        // alignItems: 'start',
+        backgroundColor: '#DA291C',
+        padding: 15,
+        borderRadius: 5,
+        elevation:5   
+    },
     tempBorder:{
         borderWidth: 1,
         borderColor: 'pink',
-    }
+    },
 })
 
