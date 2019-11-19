@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     StyleSheet,
     View,
@@ -7,6 +7,7 @@ import {
   } from 'react-native';
 
 import { TouchableOpacity, ScrollView ,FlatList } from 'react-native-gesture-handler';
+import { ListItem } from 'react-native-elements';
 
 //COMPONENT
 import { SmallItemTile } from '../Components/smallItemTitle';
@@ -15,19 +16,32 @@ import { ScrollableList } from '../Container/scrollableList';
 
 //ICONS
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBars, faShoppingCart, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faShoppingCart, faArrowRight, faWindowClose, faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 //MOCK DATA
-import { ItemList } from '../MockData/mockData'
+import { ItemList, Image } from '../MockData/mockData'
 
 
 export const MyCart = ( props ) => {
     const [isFullView, setIsFullView] = useState(false)
     const [title] = useState(props.title || 'default')
     const [activeItem, setActiveItem] = useState(0)
+    const [deleteItem, setDeleteItem] = useState()
     const [basketCounter, setBasketCounter] = useState(0)
     const [totalCost, setTotalCost] = useState(0)
     const [itemList, setItemList] = useState( ItemList || [{}])
+    const [scrollOffset, setScrollOffset] = useState()
+    const [flatListRef] = useState(useRef())
+    const [flatListHeight, setFlatListHeight] = useState(0)
+
+    // let flatListRef = useRef()
+
+    // const refs = itemList.reduce((acc, value)=> {
+    //     acc[value.id] = createRef()
+    //     return acc
+    // },{})
+
+    const [temp, setTemp] = useState('red')
 
     const [scrollToIndex, setScrollToIndex] = useState(0)
 
@@ -50,6 +64,22 @@ export const MyCart = ( props ) => {
     const expandView = () => {
         isFullView? setIsFullView(false) : setIsFullView(true);
     }   
+
+    const HandleTileClick = (index) => {
+        setActiveItem(index)
+        flatListRef.current.scrollToIndex({animated:true, index:index, offset:0})
+        // refs[index].current.scrollIntoView({
+        //     behavior: 'smooth',
+        //     block: 'start',
+        // })
+
+    }
+
+    // scrollToIndex = (index) => {
+    //     if(flatListRef !== undefined){
+    //         flatListRef.scrollToIndex({animated: true, index: index});
+    //     }
+    //   }
 
 
 
@@ -85,30 +115,48 @@ export const MyCart = ( props ) => {
             {/* BODY */}
             <View style={[{flex:0.8, flexDirection:'column', backgroundColor:'lightgray'}, styles.tempBorder]}>
             
-                <ScrollableList itemList={itemList}>
+                <ScrollableList itemList={itemList} listRef={flatListRef} scrollOffset={scrollOffset} listHeight={flatListHeight}>
                     <View>
                         <FlatList
+                            ListHeaderComponent={()=>{
+                                return(
+                                    <TouchableOpacity>
+                                        <FontAwesomeIcon icon={faArrowDown} size={20} onPress={()=>{flatListRef.current.scrollToEnd()}}></FontAwesomeIcon>
+                                    </TouchableOpacity>
+                                )
+                            }}
                             data={itemList}
                             renderItem={({item, index}) => 
-                                <TouchableOpacity key={index} onPress={()=>{setActiveItem(index)}} style={{marginLeft:10, marginRight:10, marginTop:5, marginBottom:5}}>
+                                <TouchableOpacity key={item.id} onPress={()=>{HandleTileClick(index)}} style={{marginLeft:10, marginRight:10, marginTop:5, marginBottom:5}}>
                                     <SmallItemTile
-                                        description={item.description} 
-                                        price={item.price}
+                                        id={item.id}
+                                        item={item}
                                         active={activeItem === index? true : false}
                                         deleted={item.deleted}
+                                        deleteAction={() => {item.deleted = !item.deleted}}
                                         />
                                 </TouchableOpacity>
                             }
+                            ref={flatListRef}
                             keyExtractor={(item, index) => item.description + index.toString()}
                             contentContainerStyle={isFullView?{flexDirection: 'row'}: {}}
                             showsVerticalScrollIndicator={false}
                             scrollToIndex={{index: scrollToIndex}}
+                            onScroll={(e)=> {setScrollOffset(e.nativeEvent.contentOffset.y)}}
+                            onLayout={(e) => {setFlatListHeight(e.nativeEvent.layout.height)}}
+                            ListFooterComponent={()=>{
+                                return(
+                                    <TouchableOpacity>
+                                        <FontAwesomeIcon icon={faArrowUp} size={20} onPress={()=>{flatListRef.current.scrollToIndex({animated:true, index:0})}}></FontAwesomeIcon>
+                                    </TouchableOpacity>
+                                )
+                            }}
                         />
                     </View>
                     
                     
                 </ScrollableList>
-                <Button title={`Scroll ${scrollToIndex}`} onPress={()=> setScrollToIndex(scrollToIndex +1)}></Button>
+                
             </View>
                         
             

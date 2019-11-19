@@ -15,13 +15,19 @@ import { faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
   const props = {
     itemList: [{}],
-    children: React.Component
+    listRef: {},
+    scrollOffset: {},
+    listHeight: 0,
+    children: React.Component,
 }
 
 export const ScrollableList = (props) =>{
     const [itemList, setItemList] = useState( props.itemList || [{}])
     const [scrollPosition, setScrollPosition] = useState()
     const [scrollSize, setScrollSize] = useState()
+    const [scrollOffset, setScrollOffset] = useState()
+
+    const [scrollBarRef] = useState(useRef())
     
 
     return (
@@ -35,7 +41,7 @@ export const ScrollableList = (props) =>{
                 <View style={styles.scrollContainer}>
                     
                     {/* TOP ARROW */}
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => { props.listRef.current.scrollToOffset({animated:true, offset:-50})}}>
                         <View style={styles.scrollButtonTop}>
                             <FontAwesomeIcon icon={faSortUp} style={{alignSelf:'center', marginTop:13}} color='white' size={20}></FontAwesomeIcon>
                         </View>
@@ -50,7 +56,7 @@ export const ScrollableList = (props) =>{
                     </View>
                     
                     {/* BOTTOM ARROW */}
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => { props.listRef.current.scrollToOffset({animated:true, offset:50})}}>
                         <View style={styles.scrollButtonBottom}>
                             <FontAwesomeIcon icon={faSortDown} style={{alignSelf:'center', marginTop:5}} color='white' size={20}></FontAwesomeIcon>
                         </View>

@@ -8,23 +8,36 @@ import {
     TouchableOpacity,
   } from 'react-native';
 
+import { ListItem } from 'react-native-elements';
+
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faWindowClose } from '@fortawesome/free-solid-svg-icons';
 
 const props = {
-    description: '',
-    price: 0,
+    item: {
+        id: '',
+        description: '',
+        price: '',
+        imageUrl: '',
+    },
     active: false,
     deleted: false,
+    deleteAction: ()=>{},
+    selectedAction: ()=>{}
 }
 
 export const SmallItemTile = (props) =>{
-    const id = useRef()
+    // const id = useRef()
     //State
-    const [description, setDiscription] = useState(props.description || 'default')
-    const [price, setPrice] = useState(props.price || 0.00)
+    const [id, setId] = useState(props.item.id)
+    const [description, setDiscription] = useState(props.item.description || 'default')
+    const [price, setPrice] = useState(props.item.price || 0.00)
+    const [imageUrl, setImageUrl] = useState(props.item.uri || 'https://user-images.githubusercontent.com/5962998/48658581-f4170a00-ea1a-11e8-866c-df4f42f21947.gif')
     const [active, setActive] = useState(props.active || false)
     const [deleted, setDeleted] = useState(props.deleted || false)
+
+    const deletedTextStyle = {textDecorationLine:'line-through'}
+    const [tileStyle, setTileStyle] = useState({backgroundColor:'white'})
 
     useEffect(() => {
         if(props.active !== active){
@@ -32,20 +45,66 @@ export const SmallItemTile = (props) =>{
         }
     }, [props.active])
 
+    useEffect(()=>{
+        const itemCheck = props.item
+        if(itemCheck.description !== description){
+            setDescription(props.item.description)
+        }
+        if(itemCheck.price !== price){
+            setPrice(props.item.price)
+        }
+        if(itemCheck.imageUrl !== imageUrl){
+            setImageUrl(props.item.imageUrl)
+        }
+    },[props.item])
+
+    useEffect(()=> {
+        if(props.deleted !== deleted){
+            setDeleted(props.deleted)
+        }
+    },[props.deleted])
+
+    useEffect(()=>{
+        if(deleted){
+            setTileStyle({backgroundColor:'lightgray'})
+        }
+        if(active){
+            setTileStyle({backgroundColor:'lightgreen'})
+        }
+        if(!deleted && !active){
+            setTileStyle({backgroundColor:'white'})
+        }
+    }, [deleted, active])
+
     //function
-    const changeDeleted = () => {
+    const DeletedAction = () => {
+        props.deleteAction()
         setDeleted(!deleted)
     }
 
+    const ActivateAction = () => {
+        // selectedAction
+        // setActive(!active)
+    }
+
+
     return (
-        <View ref={id} style={[{flex:1, padding:10, borderWidth:1, borderColor:'pink'}, active? {backgroundColor:'green'}: {backgroundColor:'yellow'}, deleted? {backgroundColor: 'gray'}: {}]}>
-            <View style={{flex:1, flexDirection:'row', paddingBottom:10}}>
-                <Text style={[{flex:0.7,color:'black'}, deleted? {textDecorationLine: 'line-through'}: {}]}>{description}</Text>
-                <Text style={[{flex:0.2,color:'black'}, deleted? {textDecorationLine: 'line-through'}: {}]}>{price}</Text>
-                <TouchableOpacity onPress={changeDeleted}>
-                    <FontAwesomeIcon icon={faWindowClose} style={{flex:0.3,color:'red'}} size={15}></FontAwesomeIcon>
-                </TouchableOpacity>
-            </View>
-        </View>
+            <ListItem
+                title={description}
+                titleStyle={deleted? deletedTextStyle : {}}
+                containerStyle={tileStyle}
+                leftAvatar={{
+                    source: { uri: imageUrl }
+                    }}
+                    rightIcon={
+                        <View>
+                        <Text>{`$${price}`}</Text>
+                        <TouchableOpacity onPress={DeletedAction}>
+                            <FontAwesomeIcon icon={faWindowClose} style={{flex:0.3,color:'red'}} size={15}></FontAwesomeIcon>
+                        </TouchableOpacity>
+                        </View>
+                }
+            ></ListItem>
+        
     )
 }
