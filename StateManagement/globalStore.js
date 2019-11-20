@@ -32,7 +32,15 @@ export const reducer = (state, action) => {
                     language: action.payload}
             )
         //MYCART
-        
+        case 'SET_SCROLLBAR_MOVEY':
+                return( {...state,
+                        myCart: {
+                            itemList: state.myCart.itemList,
+                            totalCost: state.myCart.totalCost,
+                            selectedItem: state.myCart.selectedItem,
+                            scrollbarMoveY: action.payload
+                        }}
+                )
         default:
             return state
     }
@@ -44,6 +52,7 @@ const initialState = {
         itemList: [{}],
         totalCost: 0,
         selectedItem: {},
+        scrollbarMoveY: 0,
     },
     teamMember: {
         itemSearch: ''

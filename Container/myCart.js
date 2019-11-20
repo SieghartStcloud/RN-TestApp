@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     StyleSheet,
     View,
@@ -33,6 +33,7 @@ export const MyCart = ( props ) => {
     const [scrollOffset, setScrollOffset] = useState()
     const [flatListRef] = useState(useRef())
     const [flatListHeight, setFlatListHeight] = useState(0)
+    const [visibleItems, setVisibleItems] = useState()
 
     // let flatListRef = useRef()
 
@@ -75,11 +76,11 @@ export const MyCart = ( props ) => {
 
     }
 
-    // scrollToIndex = (index) => {
-    //     if(flatListRef !== undefined){
-    //         flatListRef.scrollToIndex({animated: true, index: index});
-    //     }
-    //   }
+    const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+        // console.log("Visible items are", viewableItems);
+        // console.log("Changed in this iteration", changed);
+        setVisibleItems(viewableItems)
+    }, []);
 
 
 
@@ -115,9 +116,10 @@ export const MyCart = ( props ) => {
             {/* BODY */}
             <View style={[{flex:0.8, flexDirection:'column', backgroundColor:'lightgray'}, styles.tempBorder]}>
             
-                <ScrollableList itemList={itemList} listRef={flatListRef} scrollOffset={scrollOffset} listHeight={flatListHeight}>
+                <ScrollableList itemList={itemList} visibleItems={visibleItems} listRef={flatListRef} scrollOffset={scrollOffset} listHeight={flatListHeight}>
                     <View>
                         <FlatList
+                            onViewableItemsChanged={ onViewableItemsChanged }
                             ListHeaderComponent={()=>{
                                 return(
                                     <TouchableOpacity>
