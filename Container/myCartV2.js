@@ -129,7 +129,7 @@ export const MyCartV2 = ( props ) => {
                 easing: Easing.bounce,
                 }),
                 Animated.timing(downArrowOpacity, {
-                    toValue: downArrowShow? 1 : 0,
+                    toValue: downArrowShow? 0.7 : 0,
                     duration: 2500,
                 }),
             ]),
@@ -153,7 +153,7 @@ export const MyCartV2 = ( props ) => {
                 easing: Easing.bounce,
                 }),
                 Animated.timing(upArrowOpacity, {
-                    toValue: upArrowShow? 1 : 0,
+                    toValue: upArrowShow? 0.7 : 0,
                     duration: 2500,
                 }),
             ]),
@@ -184,13 +184,11 @@ export const MyCartV2 = ( props ) => {
     }
 
     const HandleTileClick = (index) => {
+        if(expanded === false){
+            listRef.current.scrollToIndex({animated:true, index:index, offset:0})
+        }
         setActiveItem(index)
-        listRef.current.scrollToIndex({animated:true, index:index, offset:0})
 
-    }
-
-    const bottomOfListHandler = ({distanceFromEnd}) => {
-        console.log(distanceFromEnd)
     }
 
     const onViewableItemsChanged = useRef(({viewableItems, changed}) => {
@@ -217,16 +215,8 @@ export const MyCartV2 = ( props ) => {
 
     const viewabilityConfig = useRef({viewAreaCoveragePercentThreshold: 50}) 
 
-    const expandClickHandler = () => {
-        
-        
-        
-        setExpanded(!expanded)
-    }
-
-
     return(
-        <Animated.View style={[styles.myCartExpandableContainer, styles.tempBorder, {width: expandableContainerWidth}]}>
+        <Animated.View style={[styles.myCartExpandableContainer, {width: expandableContainerWidth}]}>
             {/* HEADER */}
             <TouchableOpacity 
                 // onPress={expandClickHandler} 
@@ -257,10 +247,10 @@ export const MyCartV2 = ( props ) => {
             <View style={{flex:1}}>
                 {/* UPPER BUTTON */}
                 <TouchableOpacity onPress={downArrowHandler}>
-                    <Animated.View style={[{backgroundColor:'lightgray', alignItems:'center', justifyContent:'center',  height:downArrowHeight, opacity:downArrowOpacity}]}>
+                    <Animated.View style={[{backgroundColor:'#049B8E', alignItems:'center', justifyContent:'center',  height:downArrowHeight, opacity:downArrowOpacity}]}>
                         
                         <Animated.View style={{transform: [{scale: downArrowSize}]}}>
-                            <FontAwesomeIcon icon={faArrowDown}></FontAwesomeIcon>
+                            <FontAwesomeIcon icon={faArrowDown} color='white'></FontAwesomeIcon>
                         </Animated.View>    
                     
                     </Animated.View>
@@ -274,18 +264,21 @@ export const MyCartV2 = ( props ) => {
                             data={itemList}
                             onViewableItemsChanged={ onViewableItemsChanged.current }
                             viewabilityConfig={viewabilityConfig.current}
-                            renderItem={(item, index)=>
-                                <Animated.View style={expanded? {width: currentWindowDimensions.width/2} : {width : listItemWidth, height: listItemHeight, opacity: listItemOpacity}}>
-                                    <ListItem
-                                    key={index}
-                                    leftAvatar={{ source: { uri: Image } }}
-                                    title={`title - ${item.id}`}
-                                    subtitle={item.price}
-                                    rightIcon={<FontAwesomeIcon icon={faWindowClose}></FontAwesomeIcon>}
-                                    // ref={listItemRef}
-                                    bottomDivider
-                                    />
-                                </Animated.View>
+                            renderItem={({item, index})=>
+                                <TouchableOpacity onPress={() => HandleTileClick(index)}>
+                                    <Animated.View style={expanded? {width: currentWindowDimensions.width/2} : {width : listItemWidth, height: listItemHeight, opacity: listItemOpacity}}>
+                                        <ListItem
+                                        key={index}
+                                        leftAvatar={{ source: { uri: Image } }}
+                                        title={item.description}
+                                        subtitle={<Text>{expanded? 'expanded' : 'not expanded'}</Text>}
+                                        rightSubtitle={<Text>${item.price.toFixed(2)}</Text>}
+                                        rightIcon={<FontAwesomeIcon icon={faWindowClose} color={'#DA291C'}></FontAwesomeIcon>}
+                                        // ref={listItemRef}
+                                        bottomDivider
+                                        />
+                                    </Animated.View>
+                                </TouchableOpacity>
                             
                             }
                             // onViewableItemsChanged={event => onViewableItemsChanged(event)}
@@ -303,9 +296,9 @@ export const MyCartV2 = ( props ) => {
 
                 {/* LOWER BUTTON */}
                 <TouchableOpacity onPress={upArrowHandler}>
-                    <Animated.View style={{backgroundColor:'lightgray', alignItems:'center', justifyContent:'center', height:upArrowHeight, opacity:upArrowOpacity}}>
+                    <Animated.View style={{backgroundColor:'#049B8E', alignItems:'center', justifyContent:'center', height:upArrowHeight, opacity:upArrowOpacity}}>
                     <Animated.View style={{transform: [{scale: upArrowSize}]}}>
-                            <FontAwesomeIcon icon={faArrowUp}></FontAwesomeIcon>
+                            <FontAwesomeIcon icon={faArrowUp} color='white'></FontAwesomeIcon>
                         </Animated.View>
                     </Animated.View>
                 </TouchableOpacity>
