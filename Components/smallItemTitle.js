@@ -30,7 +30,7 @@ export const SmallItemTile = (props) =>{
     // const id = useRef()
     //State
     const [id, setId] = useState(props.item.id)
-    const [description, setDiscription] = useState(props.item.description || 'default')
+    const [description, setDescription] = useState(props.item.description || 'default')
     const [price, setPrice] = useState(props.item.price || 0.00)
     const [imageUrl, setImageUrl] = useState(props.item.uri || 'https://user-images.githubusercontent.com/5962998/48658581-f4170a00-ea1a-11e8-866c-df4f42f21947.gif')
     const [active, setActive] = useState(props.active || false)
@@ -92,7 +92,7 @@ export const SmallItemTile = (props) =>{
             <ListItem
                 title={description}
                 titleStyle={deleted? deletedTextStyle : {}}
-                containerStyle={tileStyle}
+                containerStyle={[tileStyle]}
                 leftAvatar={{
                     source: { uri: imageUrl }
                     }}

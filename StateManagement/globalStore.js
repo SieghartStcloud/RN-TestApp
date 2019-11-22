@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import { settingsState, settingsReducer } from './settingsState';
+import { settingsState } from './settingsState';
+import { myCartState } from './myCartState';
 
 export const StateContext = createContext();
 
@@ -32,15 +33,13 @@ export const reducer = (state, action) => {
                     language: action.payload}
             )
         //MYCART
-        case 'SET_SCROLLBAR_MOVEY':
-                return( {...state,
-                        myCart: {
-                            itemList: state.myCart.itemList,
-                            totalCost: state.myCart.totalCost,
-                            selectedItem: state.myCart.selectedItem,
-                            scrollbarMoveY: action.payload
-                        }}
-                )
+        // case 'SET_SELECTED_ITEM':
+        //         return( {...state,
+        //                 myCart: {
+        //                     ...,
+
+        //                 }}
+        //         )
         default:
             return state
     }
@@ -48,12 +47,6 @@ export const reducer = (state, action) => {
 
 
 const initialState = {
-    myCart: {
-        itemList: [{}],
-        totalCost: 0,
-        selectedItem: {},
-        scrollbarMoveY: 0,
-    },
     teamMember: {
         itemSearch: ''
     },
@@ -65,5 +58,6 @@ const initialState = {
 
 export const fullState = {
     ...initialState,
-    ...settingsState
+    ...settingsState,
+    ...myCartState,
 }

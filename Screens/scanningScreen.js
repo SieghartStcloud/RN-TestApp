@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     StyleSheet,
     View,
     Text,
     Animated,
     Button,
-    Easing
+    Easing,
+    Dimensions,
   } from 'react-native';
 
-import { MyCart } from '../Container/myCart'  
+import { MyCart } from '../Container/myCart'
+import { MyCartV2 } from '../Container/myCartV2' //TEMP  
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { StateContext, useGlobalStore } from '../StateManagement/globalStore'
 
@@ -21,13 +23,12 @@ import { StateContext, useGlobalStore } from '../StateManagement/globalStore'
      //SETTING CURRENT SCREEN AT INITIAL RENDER
     useEffect(()=> {
     dispatch({type: 'SET_CURRENT_SCREEN', payload: 'Scanning'})
-    },[])
+},[])
 
     //FUNCTIONS
     const teamPanelAction = () => {
         panelViewOn ? setPanelViewOn(false) : setPanelViewOn(true);
     }
-
 
     return (
         <View style={[styles.initialScreen, styles.tempBorder]}>
@@ -37,10 +38,10 @@ import { StateContext, useGlobalStore } from '../StateManagement/globalStore'
               <View style={[styles.supportButtonContainer], styles.tempBorder}>
                   {/* <Button onPress={()=> props.navigation.toggleDrawer()} title="Open Draw"></Button> */}
               </View>
-              <Text style={{textAlign:'right', marginTop:'auto', marginBottom:'auto'}}>Current Screen: {initialState.settings.activePage}</Text>
+              
           </View>
 
-            <MyCart></MyCart>
+            <MyCartV2></MyCartV2>
           
         </View>
       );
